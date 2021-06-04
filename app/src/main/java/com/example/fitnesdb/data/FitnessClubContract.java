@@ -1,5 +1,5 @@
-package data;
-
+package com.example.fitnesdb.data;
+import android.net.Uri;
 import android.provider.BaseColumns;
 
 public final class FitnessClubContract {
@@ -9,6 +9,12 @@ public final class FitnessClubContract {
 
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "olympys";
+
+    public static final String SCHEME = "content://";
+    public static final String AUTHORITY = "com.example.fitnesdb";
+    public static final String PATH_MEMBERS = "members";
+
+    public static final Uri BASE_CONTENT_URI = Uri.parse(SCHEME + AUTHORITY);
 
     public static final class MemberEntry implements BaseColumns {
 

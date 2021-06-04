@@ -17,6 +17,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <provider
+            android:authorities="com.example.fitnesdb"
+            android:name=".data.FitnessClubContentProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>

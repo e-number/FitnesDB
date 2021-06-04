@@ -16,7 +16,7 @@ import android.widget.Spinner;
 
 import java.util.ArrayList;
 
-import data.FitnessClubContract.MemberEntry;
+import com.example.fitnesdb.data.FitnessClubContract.MemberEntry;
 
 public class AddMemberActivity extends AppCompatActivity {
 

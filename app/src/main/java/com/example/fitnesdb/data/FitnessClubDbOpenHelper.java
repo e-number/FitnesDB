@@ -1,9 +1,9 @@
-package data;
+package com.example.fitnesdb.data;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import data.FitnessClubContract.MemberEntry;
+import com.example.fitnesdb.data.FitnessClubContract.MemberEntry;
 
 public class FitnessClubDbOpenHelper extends SQLiteOpenHelper {
     public FitnessClubDbOpenHelper(Context context) {
