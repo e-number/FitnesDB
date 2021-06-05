@@ -1,10 +1,16 @@
 package com.example.fitnesdb.data;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.example.fitnesdb.data.FitnessClubContract.*;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,12 +39,50 @@ public class FitnessClubContentProvider extends ContentProvider {
 
     @Override
     public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        return null;
+        SQLiteDatabase db = dbOpenHelper.getReadableDatabase();
+        Cursor cursor;
+
+        int match = uriMatcher.match(uri);
+
+        switch (match) {
+            case MEMBERS:
+                cursor = db.query(MemberEntry.TABLE_NAME, projection, selection, selectionArgs,
+                        null, null, sortOrder);
+                break;
+
+            case MEMBER_ID:
+                selection = MemberEntry._ID + "=?";
+                selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
+                cursor = db.query(MemberEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+                break;
+
+            default:
+                throw  new IllegalArgumentException("Can't query incorrect URI " + uri);
+
+        }
+        return cursor;
     }
 
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues values) {
-        return null;
+
+        SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
+
+        int match = uriMatcher.match(uri);
+
+        switch (match) {
+            case MEMBERS:
+                long id = db.insert(MemberEntry.TABLE_NAME, null, values);
+                if (id == -1) {
+                    Log.e("insertMethod", "Insertion of data in the table failed for " + uri);
+                    return null;
+                }
+
+                return ContentUris.withAppendedId(uri, id);
+
+            default:
+                throw  new IllegalArgumentException("Insertion of data in the table failed for " + uri);
+        }
     }
 
     @Override
