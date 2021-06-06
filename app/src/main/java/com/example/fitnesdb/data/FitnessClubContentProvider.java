@@ -186,13 +186,14 @@ public class FitnessClubContentProvider extends ContentProvider {
                 selection = MemberEntry._ID + "=?";
                 selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
                 rowsUpdated = db.update(MemberEntry.TABLE_NAME, values, selection, selectionArgs);
-                if (rowsUpdated != 0) {
-                    getContext().getContentResolver().notifyChange(uri,null);
-                }
                 break;
 
             default:
                 throw  new IllegalArgumentException("Can't update this URI " + uri);
+
+        }
+        if (rowsUpdated != 0) {
+            getContext().getContentResolver().notifyChange(uri,null);
         }
         return rowsUpdated;
     }
