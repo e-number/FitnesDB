@@ -61,6 +61,9 @@ public class FitnessClubContentProvider extends ContentProvider {
                 throw  new IllegalArgumentException("Can't query incorrect URI " + uri);
 
         }
+
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+
         return cursor;
     }
 
@@ -100,6 +103,8 @@ public class FitnessClubContentProvider extends ContentProvider {
                     return null;
                 }
 
+                getContext().getContentResolver().notifyChange(uri, null);
+
                 return ContentUris.withAppendedId(uri, id);
 
             default:
@@ -113,19 +118,26 @@ public class FitnessClubContentProvider extends ContentProvider {
         SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
 
         int match = uriMatcher.match(uri);
+        int rowsDeleted;
 
         switch (match) {
             case MEMBERS:
-                return db.delete(MemberEntry.TABLE_NAME, selection, selectionArgs);
+                rowsDeleted = db.delete(MemberEntry.TABLE_NAME, selection, selectionArgs);
+                break;
 
             case MEMBER_ID:
                 selection = MemberEntry._ID + "=?";
                 selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
-                return db.delete(MemberEntry.TABLE_NAME, selection, selectionArgs);
+                rowsDeleted = db.delete(MemberEntry.TABLE_NAME, selection, selectionArgs);
+                break;
 
             default:
                 throw  new IllegalArgumentException("Can't delete this URI " + uri);
         }
+        if (rowsDeleted != 0) {
+            getContext().getContentResolver().notifyChange(uri,null);
+        }
+        return rowsDeleted;
     }
 
     @Override
@@ -163,19 +175,26 @@ public class FitnessClubContentProvider extends ContentProvider {
         SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
 
         int match = uriMatcher.match(uri);
+        int rowsUpdated;
 
         switch (match) {
             case MEMBERS:
-                return db.update(MemberEntry.TABLE_NAME, values, selection, selectionArgs);
+                rowsUpdated = db.update(MemberEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
 
             case MEMBER_ID:
                 selection = MemberEntry._ID + "=?";
                 selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
-                return db.update(MemberEntry.TABLE_NAME, values, selection, selectionArgs);
+                rowsUpdated = db.update(MemberEntry.TABLE_NAME, values, selection, selectionArgs);
+                if (rowsUpdated != 0) {
+                    getContext().getContentResolver().notifyChange(uri,null);
+                }
+                break;
 
             default:
                 throw  new IllegalArgumentException("Can't update this URI " + uri);
         }
+        return rowsUpdated;
     }
 
     @Override
